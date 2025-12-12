@@ -1,6 +1,6 @@
 import { Button } from './ui/button'
 
-type Props = {
+export type Props = {
     value: string,
     isWorking: boolean,
     hasChanged: boolean,

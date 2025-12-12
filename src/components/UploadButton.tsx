@@ -1,6 +1,6 @@
 import { Button } from './ui/button'
 
-type Props = {
+export type Props = {
     isWorking: boolean,
     handleClick: () => void
 }
