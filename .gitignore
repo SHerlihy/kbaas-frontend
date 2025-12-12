@@ -1,4 +1,5 @@
 worktrees
+storybook-static
 
 # Local .terraform directories
 **/.terraform/*
