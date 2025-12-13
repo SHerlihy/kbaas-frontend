@@ -25,7 +25,7 @@ const UploadFile = (props: Props) => {
     return (
         <Card className='flex flex-row justify-center align-center'>
             <CardTitle>
-                {title}:
+                <p style={{'lineHeight': 2}}>{title}:</p>
             </CardTitle>
             <CardAction>
                 <HasChangedValue {...shared} handleClick={handleClickValue} />
