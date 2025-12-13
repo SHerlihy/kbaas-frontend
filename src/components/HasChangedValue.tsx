@@ -1,10 +1,10 @@
 import { Button } from './ui/button'
 
-type Props = {
+export type Props = {
     value: string,
     isWorking: boolean,
     hasChanged: boolean,
-    handleClick: ()=>void
+    handleClick: () => void
 }
 
 const HasChangedValue = ({
@@ -16,7 +16,10 @@ const HasChangedValue = ({
     return (
         <Button
             variant={hasChanged ? "default" : "ghost"}
-            className={isWorking ? "bg-lime-300" : ""}
+            className={`
+                ${isWorking ? "bg-yellow-300" : ""}
+                ${hasChanged ? "bg-lime-300" : ""}
+            `}
             disabled={hasChanged ? false : true}
             onClick={handleClick}
         >
