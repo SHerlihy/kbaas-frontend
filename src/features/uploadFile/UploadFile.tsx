@@ -7,7 +7,7 @@ import { Card, CardAction, CardTitle } from '@/components/ui/card'
 
 type Shared = Omit<PropsValue, 'handleClick'> & Omit<PropsUpload, 'handleClick'>
 
-type Props = {
+export type Props = {
     shared: Shared,
     title: string,
     handleClickValue: PropsValue['handleClick']
