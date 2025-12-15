@@ -1,23 +1,27 @@
-import { Button } from './ui/button'
+import { Input } from './ui/input'
+import { HandleFileUpload } from '@/features/uploadFile/UploadFileModel'
+
+export const LABEL_TEXT = "Upload file input"
 
 export type Props = {
     isWorking: boolean,
-    handleClick: () => void
+    handleChange: HandleFileUpload
 }
 const UploadButton = (
     {
         isWorking,
-        handleClick
+        handleChange
     }: Props
 ) => {
     return (
-        <Button
-            disabled={isWorking ? true : false}
-            variant="default"
-            onClick={handleClick}
-        >
-            Upload
-        </Button>
+        <>
+            <Input
+                type='file'
+                aria-label={LABEL_TEXT}
+                disabled={isWorking ? true : false}
+                onChange={handleChange}
+            />
+        </>
     )
 }
 

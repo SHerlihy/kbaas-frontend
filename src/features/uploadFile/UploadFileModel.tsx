@@ -1,0 +1,85 @@
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { ChangeEvent, useEffect, useState } from 'react'
+import UploadFileView from './UploadFileView'
+
+export type GetString = () => Promise<string>
+export type HandleFileUpload = (e: ChangeEvent<HTMLInputElement>) => Promise<string>
+
+const UploadFileModel = ({
+    title,
+    getInitFeedback,
+    postFile
+}: {
+    title: string,
+    getInitFeedback: GetString,
+    postFile: HandleFileUpload
+}) => {
+    const [feedback, setFeedback] = useState("")
+    const [noUpload, setNoUpload] = useState(true)
+
+    const { isPending: initPending, isError: initError, data: initData } = useQuery({
+        queryKey: [title],
+        queryFn: getInitFeedback
+    })
+
+    useEffect(() => {
+        if (initPending) {
+            setFeedback("Pending...")
+        }
+
+        if (initError) {
+            setFeedback("Error")
+        }
+
+        if (initData) {
+            setFeedback(initData)
+        }
+    }, [initPending, initError, initData])
+
+    const { isPending, isSuccess, isError, data, mutate } = useMutation({
+        mutationFn: postFile
+    })
+
+    const firstUpload = (e: ChangeEvent<HTMLInputElement>) => {
+        setNoUpload(true)
+        mutate(e)
+    }
+
+    if (noUpload) {
+        return <UploadFileView
+            title={title}
+            value={feedback}
+            hasChanged={false}
+            isWorking={false}
+            handleClickValue={() => { }}
+            handleClickUpload={firstUpload}
+        />
+    }
+
+    useEffect(() => {
+        if (isPending) {
+            setFeedback("Pending...")
+        }
+
+        if (isError) {
+            setFeedback("Error")
+        }
+
+        if (data) {
+            setFeedback(data)
+        }
+    }, [ isPending, isError, data ])
+
+    const handleClickValue = () => { }
+
+    return <UploadFileView
+        title={title}
+        value={feedback}
+        hasChanged={isSuccess}
+        isWorking={isPending}
+        handleClickValue={handleClickValue}
+        handleClickUpload={mutate}
+    />
+}
+
+export default UploadFileModel;
