@@ -5,6 +5,9 @@ import UploadFileView from './UploadFileView'
 export type GetString = () => Promise<string>
 export type HandleFileUpload = (e: ChangeEvent<HTMLInputElement>) => Promise<string>
 
+export const FEEDBACK_PENDING = "Pending..."
+export const FEEDBACK_ERROR = "Error"
+
 const UploadFileModel = ({
     title,
     getInitFeedback,
@@ -24,11 +27,11 @@ const UploadFileModel = ({
 
     useEffect(() => {
         if (initPending) {
-            setFeedback("Pending...")
+            setFeedback(FEEDBACK_PENDING)
         }
 
         if (initError) {
-            setFeedback("Error")
+            setFeedback(FEEDBACK_ERROR)
         }
 
         if (initData) {
@@ -58,11 +61,11 @@ const UploadFileModel = ({
 
     useEffect(() => {
         if (isPending) {
-            setFeedback("Pending...")
+            setFeedback(FEEDBACK_PENDING)
         }
 
         if (isError) {
-            setFeedback("Error")
+            setFeedback(FEEDBACK_ERROR)
         }
 
         if (data) {
