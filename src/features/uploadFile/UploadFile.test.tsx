@@ -103,7 +103,7 @@ const withResolvers = () => {
     return { promise, resolve, reject }
 }
 
-function getFeedbackResolvers() {
+function getInitFeedbackResolvers() {
     const { promise, resolve, reject } = withResolvers()
     const getInitFeedback: GetString = async () => { return await promise as Promise<string> }
 
@@ -117,7 +117,7 @@ describe('Init feedback', () => {
     it('shows pending feedback', async () => {
 
         const queryClient = new QueryClient()
-        const { getInitFeedback } = getFeedbackResolvers()
+        const { getInitFeedback } = getInitFeedbackResolvers()
 
         render(
             <QueryClientProvider client={queryClient}>
@@ -139,7 +139,7 @@ describe('Init feedback', () => {
     it('shows error feedback', async () => {
         const findRegexp = new RegExp(FEEDBACK_ERROR)
         const queryClient = new QueryClient()
-        const { getInitFeedback, resolve, reject } = getFeedbackResolvers()
+        const { getInitFeedback, resolve, reject } = getInitFeedbackResolvers()
 
         render(
             <QueryClientProvider client={queryClient}>
@@ -169,7 +169,7 @@ describe('Init feedback', () => {
         const successStr = "Success in test"
         const findRegexp = new RegExp(successStr)
         const queryClient = new QueryClient()
-        const { getInitFeedback, resolve, reject } = getFeedbackResolvers()
+        const { getInitFeedback, resolve, reject } = getInitFeedbackResolvers()
 
         render(
             <QueryClientProvider client={queryClient}>
@@ -221,23 +221,23 @@ async function uploadFile(screen: Screen, user: UserEvent, file?: File): Promise
     return fileInput as HTMLInputElementWithFiles
 }
 
-function getFeedbackResolvers() {
+function getUploadResolvers() {
     const { promise, resolve, reject } = withResolvers()
-    const getInitFeedback: GetString = async () => { return await promise as Promise<string> }
+    const handleFileUpload: HandleFileUpload = async () => { return await promise as Promise<void> }
 
-    return { getInitFeedback, resolve, reject }
+    return { handleFileUpload, resolve, reject }
 }
 
 describe('Upload feedback', () => {
 
     describe('from init feedback success', () => {
 
-        it('shows pending', async() => {
+        it('shows pending', async () => {
 
             const successStr = "SUCCESS ON INIT"
-            const pendingPostFile: HandleFileUpload = async () => { return }
+            const findRegexp = new RegExp(FEEDBACK_PENDING)
             const queryClient = new QueryClient()
-            const { getInitFeedback, resolve, reject } = getFeedbackResolvers()
+            const { handleFileUpload } = getUploadResolvers()
 
             act(() => {
 
@@ -246,22 +246,28 @@ describe('Upload feedback', () => {
                         <UploadFileModel
                             title='Example'
                             getInitFeedback={() => { return Promise.resolve(successStr) }}
-                            postFile={pendingPostFile}
+                            postFile={handleFileUpload}
                         />
                     </QueryClientProvider>
                 )
 
             })
 
-            act(() => {
-                resolve(successStr)
+            let feedback: HTMLElement | null;
+            await waitFor(() => {
+                feedback = screen.queryByText(new RegExp(successStr))
+                expect(feedback).not.toBeNull()
+
             })
 
-            let feedback: HTMLElement | null;
+            const user = userEvent.setup()
+            act(() => {
+                uploadFile(screen, user)
+            })
+
             await waitFor(() => {
                 feedback = screen.queryByText(findRegexp)
                 expect(feedback).not.toBeNull()
-
             })
 
         })

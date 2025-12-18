@@ -17,33 +17,51 @@ const UploadFileModel = ({
     getInitFeedback: GetString,
     postFile: HandleFileUpload
 }) => {
+    const [isInit, setIsInit] = useState(true)
     const [feedback, setFeedback] = useState("")
-    // const [noUpload, setNoUpload] = useState(true)
 
-    const { isPending: initPending, isError: initError, data: initData } = useQuery({
-        queryKey: [title],
-        queryFn: getInitFeedback,
+    async function handleMutation(e?: ChangeEvent<HTMLInputElement>) {
+
+        if (isInit) {
+            return await getInitFeedback()
+        }
+
+        if (!e) {
+            throw new Error("No event: handleMutation")
+        }
+
+        return await postFile(e)
+
+    }
+
+    const { isPending, isSuccess, isError, data, mutate } = useMutation({
+        mutationFn: handleMutation,
         retry: false
     })
 
     useEffect(() => {
-        if (initPending) {
+
+        mutate(undefined)
+
+    }, [])
+
+    useEffect(() => {
+
+        if (isPending) {
             setFeedback(FEEDBACK_PENDING)
         }
 
-        if (initError) {
+        if (isError) {
             setFeedback(FEEDBACK_ERROR)
         }
 
-        if (initData) {
-            setFeedback(initData)
+        if (data) {
+            setFeedback(data)
         }
-    }, [initPending, initError, initData])
 
-    // const { isPending, isSuccess, isError, data, mutate } = useMutation({
-    //     mutationFn: postFile
-    // })
-    //
+    }, [isPending, isError, data])
+
+
     // const firstUpload = (e: ChangeEvent<HTMLInputElement>) => {
     //     // setNoUpload(true)
     //     mutate(e)
@@ -59,7 +77,7 @@ const UploadFileModel = ({
                 isWorking={false}
                 handleClickValue={() => { }}
                 // handleChangeUpload={firstUpload}
-                handleChangeUpload={(e)=>{}}
+                handleChangeUpload={(e) => { setIsInit(false), mutate(e) }}
             />
         </>
     )
