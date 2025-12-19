@@ -137,7 +137,7 @@ describe('Init feedback', () => {
     it('shows error feedback', async () => {
         const findRegexp = new RegExp(FEEDBACK_ERROR)
         const queryClient = new QueryClient()
-        const { getInitFeedback, resolve, reject } = getInitFeedbackResolvers()
+        const { getInitFeedback, reject } = getInitFeedbackResolvers()
 
         render(
             <QueryClientProvider client={queryClient}>
@@ -167,7 +167,7 @@ describe('Init feedback', () => {
         const successStr = "Success in test"
         const findRegexp = new RegExp(successStr)
         const queryClient = new QueryClient()
-        const { getInitFeedback, resolve, reject } = getInitFeedbackResolvers()
+        const { getInitFeedback, resolve } = getInitFeedbackResolvers()
 
         render(
             <QueryClientProvider client={queryClient}>
@@ -363,117 +363,3 @@ describe('Upload feedback', () => {
     })
 
 })
-
-
-// describe('Successful upload', () => {
-//     const initFeedbackSuccessStr = "init success"
-//     const successInitFeedback: GetString = async () => { return initFeedbackSuccessStr }
-//
-//     const feedbackSuccess = "post success"
-//     const withResolvers = () => {
-//         let resolve: (value: unknown) => void;
-//         let reject: (value: unknown) => void;
-//
-//         const promise = new Promise((res, rej) => {
-//             resolve = res
-//             reject = rej
-//         })
-//
-//         // @ts-ignore
-//         if (!resolve || !reject) {
-//             throw new Error("from withResolvers")
-//         }
-//
-//         return { promise, resolve, reject }
-//     }
-//
-//     it('renders the component', () => {
-//         const { promise, resolve, reject } = withResolvers()
-//         const successPostFile: HandleFileUpload = async () => {
-//             await promise
-//         }
-//
-//         render(
-//             <QueryClientProvider client={queryClient}>
-//                 <UploadFileModel
-//                     title='Example'
-//                     getInitFeedback={successInitFeedback}
-//                     postFile={successPostFile}
-//                 />
-//             </QueryClientProvider>
-//         )
-//         screen.debug();
-//     })
-//
-//     it('shows pending feedback', async () => {
-//         const { promise, resolve, reject } = withResolvers()
-//         const successPostFile: HandleFileUpload = async () => {
-//             await promise
-//         }
-//
-//         render(
-//             <QueryClientProvider client={queryClient}>
-//                 <UploadFileModel
-//                     title='Example'
-//                     getInitFeedback={successInitFeedback}
-//                     postFile={successPostFile}
-//                 />
-//             </QueryClientProvider>
-//         )
-//
-//         const user = userEvent.setup()
-//
-//         let feedbackPending: HTMLElement | null;
-//         feedbackPending = screen.queryByText(FEEDBACK_PENDING)
-//         expect(feedbackPending).toBeNull()
-//
-//         await uploadFile(screen, user)
-//
-//         feedbackPending = await screen.findByText(FEEDBACK_PENDING)
-//         expect(feedbackPending).not.toBeNull()
-//     })
-//
-// it('shows success feedback', async () => {
-//     const { promise, resolve, reject } = withResolvers()
-//     const successPostFile: HandleFileUpload = async () => {
-//         await promise
-//         return feedbackSuccess
-//     }
-//
-//     render(
-//         <QueryClientProvider client={queryClient}>
-//             <UploadFileModel
-//                 title='Example'
-//                 getInitFeedback={successInitFeedback}
-//                 postFile={successPostFile}
-//             />
-//         </QueryClientProvider>
-//     )
-//     let feedback: HTMLElement|null;
-//     feedback = screen.queryByText(feedbackSuccess)
-//     expect(feedback).toBeNull()
-//     //change file
-//
-//     resolve()
-//     await screen.findByText(feedbackSuccess)
-// })
-//
-// it('shows error feedback', () => {
-//     const { promise, resolve, reject } = Promise.withResolvers()
-//     const successPostFile: HandleFileUpload = async () => {
-//         await promise
-//         return postFileSuccessStr
-//     }
-//
-//     render(
-//         <QueryClientProvider client={queryClient}>
-//             <UploadFileModel
-//                 title='Example'
-//                 getInitFeedback={successInitFeedback}
-//                 postFile={successPostFile}
-//             />
-//         </QueryClientProvider>
-//     )
-//     //change file
-// })
-// })
