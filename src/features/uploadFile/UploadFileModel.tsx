@@ -7,6 +7,10 @@ export type HandleFileUpload = (e: ChangeEvent<HTMLInputElement>) => Promise<str
 
 export const FEEDBACK_PENDING = "Pending..."
 export const FEEDBACK_ERROR = "Error"
+export type Feedback =
+    | typeof FEEDBACK_PENDING
+    | typeof FEEDBACK_ERROR
+    | string
 
 const UploadFileModel = ({
     title,
@@ -17,7 +21,7 @@ const UploadFileModel = ({
     getInitFeedback: GetString,
     postFile: HandleFileUpload
 }) => {
-    const [feedback, setFeedback] = useState("")
+    const [feedback, setFeedback] = useState<Feedback>(FEEDBACK_PENDING)
 
     async function handleMutation(e?: ChangeEvent<HTMLInputElement>) {
 
@@ -68,7 +72,7 @@ const UploadFileModel = ({
                 isWorking={false}
                 handleClickValue={() => { }}
                 handleChangeUpload={
-                    (e) => {  mutate(e) }
+                    (e) => { mutate(e) }
                 }
             />
         </>
