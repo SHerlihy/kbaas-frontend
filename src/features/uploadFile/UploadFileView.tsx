@@ -2,11 +2,12 @@ import ConfirmFeedbackButton, { Props as PropsConfirmFeedback } from '@/componen
 import UploadInput, { Props as PropsUpload } from '@/components/UploadInput'
 import { Card, CardTitle } from '@/components/ui/card'
 
-export type Props = {
-    title: string,
-    isInit: boolean,
-    handleChangeUpload: PropsUpload['handleChange']
-}
+export type Props =
+    {
+        title: string,
+        isInit: boolean,
+        handleChangeUpload: PropsUpload['handleChange']
+    }
     & PropsConfirmFeedback
     & Omit<PropsUpload, 'handleChange' | 'disabled'>
 

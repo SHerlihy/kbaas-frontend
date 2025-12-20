@@ -40,9 +40,7 @@ const UploadFileModel = ({
 
     const { isPending, isError, data, mutate } = useMutation({
         mutationFn: handleMutation,
-        retry: false,
-        //bull
-        throwOnError: false
+        retry: false
     })
 
     useEffect(() => {
@@ -66,7 +64,6 @@ const UploadFileModel = ({
         }
 
     }, [isPending, isError, data])
-
 
     return (
         <>

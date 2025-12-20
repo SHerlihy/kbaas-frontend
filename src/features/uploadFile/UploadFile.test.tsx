@@ -301,6 +301,7 @@ describe('Upload feedback', () => {
 describe('Confirm feedback', () => {
 
     describe('from init pending', () => {
+
         async function renderInitPending() {
 
             const queryClient = new QueryClient()
