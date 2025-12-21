@@ -1,10 +1,9 @@
-import { useForm } from '@tanstack/react-form'
+import { Updater, useForm } from '@tanstack/react-form'
 import { z } from 'zod'
 import Field from './Field'
 import FormButtons from './FormButtons'
 import { Textarea } from '@/components/ui/textarea'
-
-const BASE_URL = "https://pokeapi.co/api/v2/berry/"
+import { useEffect, useState } from 'react'
 
 const storySchema = z.object({
     story: z.string()
@@ -15,15 +14,22 @@ const formDefaults: FormDefaults = {
     story: ""
 }
 
-function SubmitStoryForm({
-    defaultValues = formDefaults,
-    handleFormActionReset,
-    isResponseError,
-}: {
+type Props = {
     defaultValues: FormDefaults,
+    postMarkStory: (story: string) => Promise<{ error: string, response: string }>,
     handleFormActionReset: () => void,
     isResponseError: boolean,
-}) {
+}
+
+function SubmitStoryForm({
+    defaultValues = formDefaults,
+    postMarkStory,
+    handleFormActionReset,
+    isResponseError,
+}: Props) {
+
+    const [story, setStory] = useState(defaultValues.story)
+
     const form = useForm({
         defaultValues,
         validators: {
@@ -31,8 +37,13 @@ function SubmitStoryForm({
             onMount: storySchema,
         },
         onSubmit: async ({ value }) => {
-            const url = `${BASE_URL}`
-            //return await postMarkStory(url, value)
+
+            const { error, response } = await postMarkStory(value.story)
+
+            if (error) { throw new Error(error) }
+
+            setStory(response)
+
         },
     })
 
@@ -60,23 +71,10 @@ function SubmitStoryForm({
             <form.Field
                 name="story"
                 children={(field) => (
-                    <Field
-                        errors={field.state.meta.errorMap.onChange}
-                    >
-                        <Textarea
-                            ref={(textarea) => {
-                                if (textarea) {
-                                    textarea.style.height = "0px";
-                                    textarea.style.height = textarea.scrollHeight + "px";
-                                }
-                            }}
-                            placeholder="Paste your story here :)"
-                            className={"h-full overflow-hidden"}
-                            name={field.name}
-                            value={field.state.value}
-                            onChange={(e) => field.handleChange(e.target.value)}
-                        />
-                    </Field>
+                    <StoryField
+                        field={field}
+                        story={story}
+                    />
                 )}
             />
             <form.Subscribe
@@ -89,6 +87,39 @@ function SubmitStoryForm({
                     />}
             />
         </form >
+    )
+}
+
+function StoryField({
+    field,
+    story,
+}: {
+    field: any,
+    story: string,
+}) {
+
+    useEffect(() => {
+        field.setValue(story)
+    }, [story])
+
+    return (
+        <Field
+            errors={field.state.meta.errorMap.onChange}
+        >
+            <Textarea
+                ref={(textarea) => {
+                    if (textarea) {
+                        textarea.style.height = "0px";
+                        textarea.style.height = textarea.scrollHeight + "px";
+                    }
+                }}
+                placeholder="Paste your story here :)"
+                className={"h-full overflow-hidden"}
+                name={field.name}
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+            />
+        </Field>
     )
 }
 

@@ -9,6 +9,7 @@ const meta = {
     component: SubmitStoryForm,
     tags: ['autodocs'],
     args: {
+        postMarkStory: fn(),
         handleFormActionReset: fn()
     },
 } satisfies Meta<typeof SubmitStoryForm>;
@@ -33,6 +34,7 @@ export const WholeStory: Story = {
 
 export const Error: Story = {
     args: {
+        defaultValues: { story: seventyK },
         isResponseError: true
     }
 };
