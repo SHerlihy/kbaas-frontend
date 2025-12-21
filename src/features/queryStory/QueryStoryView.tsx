@@ -1,34 +1,33 @@
-import { Updater, useForm } from '@tanstack/react-form'
+import { useForm } from '@tanstack/react-form'
 import { z } from 'zod'
-import Field from './Field'
-import FormButtons from './FormButtons'
-import { Textarea } from '@/components/ui/textarea'
 import { useEffect, useState } from 'react'
+import StoryField from './components/StoryField'
+import FormButtons from '@/components/form/FormButtons'
 
 const storySchema = z.object({
     story: z.string()
 })
 
 type FormDefaults = z.infer<typeof storySchema>
-const formDefaults: FormDefaults = {
+export const formDefaults: FormDefaults = {
     story: ""
 }
 
 type Props = {
-    defaultValues: FormDefaults,
-    postMarkStory: (story: string) => Promise<{ error: string, response: string }>,
+    defaultValues?: FormDefaults,
+    handleSubmit: (e: string) => Promise<void>,
     handleFormActionReset: () => void,
     isResponseError: boolean,
+    marked: string|null,
 }
 
-function SubmitStoryForm({
+function QueryStoryView({
     defaultValues = formDefaults,
-    postMarkStory,
+    handleSubmit,
     handleFormActionReset,
     isResponseError,
+    marked
 }: Props) {
-
-    const [story, setStory] = useState(defaultValues.story)
 
     const form = useForm({
         defaultValues,
@@ -36,15 +35,7 @@ function SubmitStoryForm({
             onChange: storySchema,
             onMount: storySchema,
         },
-        onSubmit: async ({ value }) => {
-
-            const { error, response } = await postMarkStory(value.story)
-
-            if (error) { throw new Error(error) }
-
-            setStory(response)
-
-        },
+        onSubmit: async ({ value }) => { await handleSubmit(value.story) }
     })
 
     const handleFormReset = () => {
@@ -73,7 +64,7 @@ function SubmitStoryForm({
                 children={(field) => (
                     <StoryField
                         field={field}
-                        story={story}
+                        marked={marked}
                     />
                 )}
             />
@@ -90,37 +81,4 @@ function SubmitStoryForm({
     )
 }
 
-function StoryField({
-    field,
-    story,
-}: {
-    field: any,
-    story: string,
-}) {
-
-    useEffect(() => {
-        field.setValue(story)
-    }, [story])
-
-    return (
-        <Field
-            errors={field.state.meta.errorMap.onChange}
-        >
-            <Textarea
-                ref={(textarea) => {
-                    if (textarea) {
-                        textarea.style.height = "0px";
-                        textarea.style.height = textarea.scrollHeight + "px";
-                    }
-                }}
-                placeholder="Paste your story here :)"
-                className={"h-full overflow-hidden"}
-                name={field.name}
-                value={field.state.value}
-                onChange={(e) => field.handleChange(e.target.value)}
-            />
-        </Field>
-    )
-}
-
-export default SubmitStoryForm
+export default QueryStoryView

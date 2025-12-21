@@ -1,5 +1,9 @@
 import { Button } from "@/components/ui/button"
 
+export const SUBMIT = 'submit'
+export const PENDING = '...'
+export const RESET = 'reset'
+
 function FormButtons({
     canSubmit,
     isSubmitting,
@@ -11,11 +15,14 @@ function FormButtons({
 }) {
     return (
         <>
-            <Button type="submit" disabled={!canSubmit}>
-                {isSubmitting ? '...' : 'Submit'}
+            <Button
+                type="submit"
+                disabled={!canSubmit}
+            >
+                {isSubmitting ? PENDING : SUBMIT}
             </Button>
             <Button type="reset" onClick={handleReset}>
-                Reset
+                {RESET}
             </Button>
         </>
     )
