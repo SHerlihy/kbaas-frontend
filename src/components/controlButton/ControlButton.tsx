@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 
-export type Phase = "idle" | "uploading" | "ready" | "confirm" | "error"
+export type Phase = "idle" | "pending" | "ready" | "confirm" | "error"
 
 export type Props = {
     phase: Phase,
@@ -17,7 +17,7 @@ const ControlButton = ({
         <Button
             className={`
                 ${phase !== "idle" && "cursor-pointer"}
-                ${phase === "uploading" && "hover:bg-yellow-400 bg-yellow-500"}
+                ${phase === "pending" && "hover:bg-yellow-400 bg-yellow-500"}
                 ${phase === "confirm" && "hover:bg-lime-400 bg-lime-500"}
                 ${phase === "error" && "hover:bg-red-400 bg-red-500"}
             `}

@@ -3,6 +3,10 @@ import QueryStoryView from './QueryStoryView'
 import { useEffect, useState } from 'react'
 import { Phase } from '@/components/controlButton/ControlButton'
 
+export const FEEDBACK_READY = "submit"
+export const FEEDBACK_ERROR = "retry?"
+export const FEEDBACK_PENDING = "cancel?"
+
 type Props = {
     postMarkStory: (story: string) => Promise<string>,
     abortMarkStory: (reason?: any) => void
@@ -12,7 +16,7 @@ function QueryStoryModel({
     postMarkStory,
     abortMarkStory
 }: Props) {
-    const [feedback, setFeedback] = useState("submit")
+    const [feedback, setFeedback] = useState(FEEDBACK_READY)
     const [phase, setPhase] = useState<Phase>("ready")
 
     const { data, mutateAsync, isError, isPending, isSuccess } = useMutation({
@@ -35,19 +39,19 @@ function QueryStoryModel({
 
         if (isSuccess) {
             setPhase("ready")
-            setFeedback("submit")
+            setFeedback(FEEDBACK_READY)
             return
         }
 
         if (isError) {
             setPhase("error")
-            setFeedback("retry?")
+            setFeedback(FEEDBACK_ERROR)
             return
         }
 
         if (isPending) {
-            setPhase("uploading")
-            setFeedback("cancel?")
+            setPhase("pending")
+            setFeedback(FEEDBACK_PENDING)
             return
         }
 
@@ -58,7 +62,7 @@ function QueryStoryModel({
             case "ready":
                 handleQuery()
                 break;
-            case "uploading":
+            case "pending":
                 abortMarkStory()
                 break;
             case "error":
