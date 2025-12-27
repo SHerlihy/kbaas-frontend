@@ -14,7 +14,7 @@ const getKey = () => {
     return getParam("key")
 }
 
-const { uploadFile, abortFileUpload, getFilename } = new UploadFileControls(BUCKET_URL)
+const { loadFile, uploadFile, abortFileUpload, getFilename } = new UploadFileControls(BUCKET_URL)
 const { postQuery, demarshall, abortQuery } = new QueryStoryControl(POST_QUERY_URL, getKey)
 
 const MarkStory = () => {
@@ -35,6 +35,20 @@ const MarkStory = () => {
             <UploadFileModel
                 title="Phrases"
                 getInitFeedback={getFilename}
+                loadFile={loadFile}
+                uploadFile={uploadFile}
+                abortUpload={abortFileUpload}
+            />
+        </>
+    )
+
+    return (
+        <>
+            <ParamInput title={"key"} setParam={setParam} />
+            <UploadFileModel
+                title="Phrases"
+                getInitFeedback={getFilename}
+                loadFile={loadFile}
                 uploadFile={uploadFile}
                 abortUpload={abortFileUpload}
             />

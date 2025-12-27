@@ -5,6 +5,7 @@ import {
 } from '@tanstack/react-query'
 import QueryStoryView, { HandleSubmit } from './QueryStoryView'
 import { useEffect, useState } from 'react'
+import { Phase } from '@/components/controlButton/ControlButton'
 
 const queryClient = new QueryClient()
 
@@ -17,8 +18,10 @@ function QueryStoryModel({
     postMarkStory,
     abortMarkStory
 }: Props) {
+    const [feedback, setFeedback] = useState("submit")
+    const [phase, setPhase] = useState<Phase>("ready")
 
-    const { data, mutateAsync, isError, isSuccess } = useMutation({
+    const { data, mutateAsync, isError, isPending, isSuccess } = useMutation({
         mutationFn: postMarkStory
     })
 
@@ -30,13 +33,37 @@ function QueryStoryModel({
         }
     }, [isSuccess])
 
+    useEffect(() => {
+
+        if (isSuccess) {
+            setPhase("ready")
+            setFeedback("submit")
+            return
+        }
+
+        if (isError) {
+            setPhase("error")
+            setFeedback("retry?")
+            return
+        }
+
+        if (isPending) {
+            setPhase("uploading")
+            setFeedback("cancel?")
+            return
+        }
+
+    }, [isPending, isError, data])
+
     return (
         <QueryClientProvider client={queryClient}>
             <QueryStoryView
-                handleSubmit={mutateAsync}
-                isResponseError={isError}
-                handleFormActionReset={abortMarkStory}
                 marked={marked}
+                handleQuery={mutateAsync}
+                handleAbort={abortMarkStory}
+                feedback={feedback}
+                phase={phase}
+                setPhase={setPhase}
             />
         </QueryClientProvider>
     )

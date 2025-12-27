@@ -26,7 +26,8 @@ const options = {
 };
 
 interface IUploadFileControls {
-    uploadFile: (e: ChangeEvent<HTMLInputElement>) => Promise<string>
+    loadFile: (e: ChangeEvent<HTMLInputElement>) => void
+    uploadFile: () => Promise<string>
     abortFileUpload: (reason?: any) => void
     getFilename: GetString
 }
@@ -35,19 +36,26 @@ class UploadFileControls implements IUploadFileControls {
     controller = new AbortController()
 
     baseUrl: string;
+    file: File | null = null;
 
     constructor(baseUrl: string) { this.baseUrl = baseUrl }
 
-    uploadFile = async (e: ChangeEvent<HTMLInputElement>) => {
+    loadFile = (e: ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files
         if (files === null) {
             new Error(`No file to upload`)
         }
 
-        const formData = new FormData();
-        const file = files![0]
+        this.file = files![0]
+    }
 
-        formData.append('file', file);
+    uploadFile = async () => {
+        if (this.file === null) {
+            throw new Error(`No file to upload`)
+        }
+
+        const formData = new FormData();
+        formData.append('file', this.file);
 
         const response = await this.uploadFileRequest(formData)
 
@@ -55,7 +63,10 @@ class UploadFileControls implements IUploadFileControls {
             throw new Error(`Upload file status: ${response.status}`)
         }
 
-        return file.name
+        const filename = this.file.name
+        this.file = null
+
+        return filename
     }
 
     abortFileUpload = (reason?: any) => {
