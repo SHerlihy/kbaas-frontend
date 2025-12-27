@@ -49,17 +49,7 @@ class UploadFileControls implements IUploadFileControls {
 
         formData.append('file', file);
 
-        const response = await fetch(this.baseUrl,
-            {
-                method: "PUT",
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-                mode: "cors",
-                signal: this.controller.signal,
-                body: formData
-            }
-        )
+        const response = await this.getFilenameRequest()
 
         if (response.status !== 200) {
             throw new Error(`Upload file status: ${response.status}`)
@@ -73,11 +63,8 @@ class UploadFileControls implements IUploadFileControls {
     }
 
     async getFilename() {
-        const response = await fetch(this.baseUrl, {
-            method: "GET",
-            mode: "cors",
-            signal: this.controller.signal
-        })
+
+        const response = await this.getFilenameRequest()
 
         if (response.status !== 200) {
             throw new Error("Unable to list bucket objects")
@@ -93,6 +80,90 @@ class UploadFileControls implements IUploadFileControls {
 
         return contents[0].Key
     }
+
+    getFilenameRequest = async () => {
+        if (import.meta.env.DEV) {
+            return await this.getFilenameRequestDev()
+        }
+
+        return await this.getFilenameRequestProd()
+    }
+
+    getFilenameRequestDev = async () => {
+
+        await new Promise(r => setTimeout(r, 2000));
+
+        const successOpts = {
+            status: 200,
+            satusText: "Init complete"
+        }
+
+        const successResponse = new Response("Init filename", successOpts)
+
+        return successResponse
+    }
+
+    getFilenameRequestProd = async () => {
+
+        return await fetch(this.baseUrl, {
+            method: "GET",
+            mode: "cors",
+            signal: this.controller.signal
+        })
+
+    }
+
+
+    uploadFileRequest = async (formData: FormData) => {
+        if (import.meta.env.DEV) {
+            return await this.uploadFileRequestDev()
+        }
+
+        return await this.uploadFileRequestProd(formData)
+    }
+
+    uploadFileRequestDev = async () => {
+
+        await new Promise(r => setTimeout(r, 2000));
+
+        const failOpts = {
+            status: 400,
+            statusText: "Error"
+        }
+
+        const successOpts = {
+            status: 200,
+            satusText: "Upload complete"
+        }
+
+        const failResponse = new Response("", failOpts)
+
+        const successResponse = new Response("Uploaded file name", successOpts)
+
+        const rnd = Math.random()
+
+        if (rnd > 0.5) {
+            return failResponse
+        }
+
+        return successResponse
+    }
+
+    uploadFileRequestProd = async (formData: FormData) => {
+
+        await fetch(this.baseUrl,
+            {
+                method: "PUT",
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+                mode: "cors",
+                signal: this.controller.signal,
+                body: formData
+            }
+        )
+    }
+
 }
 
 export default UploadFileControls
