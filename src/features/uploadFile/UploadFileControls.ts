@@ -38,7 +38,7 @@ class UploadFileControls implements IUploadFileControls {
 
     constructor(baseUrl: string) { this.baseUrl = baseUrl }
 
-    async uploadFile(e: ChangeEvent<HTMLInputElement>) {
+    uploadFile = async (e: ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files
         if (files === null) {
             new Error(`No file to upload`)
@@ -58,11 +58,11 @@ class UploadFileControls implements IUploadFileControls {
         return file.name
     }
 
-    abortFileUpload(reason?: any) {
+    abortFileUpload = (reason?: any) => {
         this.controller.abort(reason)
     }
 
-    async getFilename() {
+    getFilename = async() => {
 
         const response = await this.getFilenameRequest()
 
