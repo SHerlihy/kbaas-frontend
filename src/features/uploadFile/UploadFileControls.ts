@@ -1,5 +1,4 @@
 import { ChangeEvent } from "react";
-import { GetString } from "./UploadFileModel";
 import { xml2json } from "xml-js";
 
 type Contents = {
@@ -29,7 +28,7 @@ interface IUploadFileControls {
     loadFile: (e: ChangeEvent<HTMLInputElement>) => void
     uploadFile: () => Promise<string>
     abortFileUpload: (reason?: any) => void
-    getFilename: GetString
+    getFilename: () => Promise<string>
 }
 
 class UploadFileControls implements IUploadFileControls {
@@ -197,7 +196,7 @@ class UploadFileControls implements IUploadFileControls {
             {
                 method: "PUT",
                 headers: {
-                    'Content-Type': 'multipart/form-data',
+                    'Content-Type': 'multipart/form-data'
                 },
                 mode: "cors",
                 signal: this.controller.signal,

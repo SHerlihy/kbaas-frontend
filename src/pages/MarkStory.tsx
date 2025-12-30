@@ -1,13 +1,13 @@
 import ParamInput from '@/features/paramInput/ParamInput'
 import ParamStore from '@/features/paramInput/ParamStore'
-import QueryStoryControl from '@/features/queryStory/QueryStoryControl'
-import QueryStoryModel from '@/features/queryStory/QueryStoryModel'
 import UploadFileControls from '@/features/uploadFile/UploadFileControls'
 import UploadFileModel from '@/features/uploadFile/UploadFileModel'
-import { catchError } from '@/lib/async'
 
-const BUCKET_URL = "https://32th7r2f0h.execute-api.eu-west-2.amazonaws.com/main/docs20251227222148605600000001/"
-const POST_QUERY_URL = ""
+// import QueryStoryControl from '@/features/queryStory/QueryStoryControl'
+// import QueryStoryModel from '@/features/queryStory/QueryStoryModel'
+// import { catchError } from '@/lib/async'
+
+const BUCKET_URL = "https://1jp6i56akb.execute-api.eu-west-2.amazonaws.com/main/docs20251230081756234200000001/"
 
 const { setParam, getParam } = new ParamStore()
 
@@ -16,19 +16,21 @@ const getKey = () => {
 }
 
 const { loadFile, uploadFile, abortFileUpload, getFilename } = new UploadFileControls(BUCKET_URL, getKey)
-const { postQuery, demarshall, abortQuery } = new QueryStoryControl(POST_QUERY_URL, getKey)
+
+// const POST_QUERY_URL = ""
+// const { postQuery, demarshall, abortQuery } = new QueryStoryControl(POST_QUERY_URL, getKey)
 
 const MarkStory = () => {
 
-    const handlePostMarkStory = async (story: string) => {
-        const [error, response] = await catchError(postQuery(story))
-
-        if (error) {
-            throw error
-        }
-
-        return await demarshall(response)
-    }
+    // const handlePostMarkStory = async (story: string) => {
+    //     const [error, response] = await catchError(postQuery(story))
+    //
+    //     if (error) {
+    //         throw error
+    //     }
+    //
+    //     return await demarshall(response)
+    // }
 
     return (
         <>
